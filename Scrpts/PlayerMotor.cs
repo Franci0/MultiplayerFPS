@@ -8,7 +8,13 @@ public class PlayerMotor : MonoBehaviour
 
 	private Vector3 velocity = Vector3.zero;
 	private Vector3 rotation = Vector3.zero;
-	private Vector3 cameraRotation = Vector3.zero;
+	private float cameraRotationX = 0f;
+	private float currentCameraRotationX = 0f;
+	private Vector3 thrusterForce = Vector3.zero;
+
+	[SerializeField]
+	private float cameraRotationLimit = 85f;
+
 	private Rigidbody rb;
 
 	//Gets a movement vector
@@ -24,9 +30,15 @@ public class PlayerMotor : MonoBehaviour
 	}
 
 	//Gets a rotational vector for the camera
-	public void RotateCamera (Vector3 _cameraRotation)
+	public void RotateCamera (float _cameraRotationX)
 	{
-		cameraRotation = _cameraRotation;
+		cameraRotationX = _cameraRotationX;
+	}
+
+	//Gets a thruster vector
+	public void ApplyThruster (Vector3 _thrusterForce)
+	{
+		thrusterForce = _thrusterForce;
 	}
 
 	void Start ()
@@ -47,6 +59,10 @@ public class PlayerMotor : MonoBehaviour
 		if (velocity != Vector3.zero) {
 			rb.MovePosition (transform.position	+ velocity * Time.fixedDeltaTime);
 		}
+
+		if (thrusterForce != Vector3.zero) {
+			rb.AddForce (thrusterForce * Time.fixedDeltaTime, ForceMode.Acceleration);
+		}
 	}
 
 	//Perform rotation based on a rotation variable
@@ -55,7 +71,13 @@ public class PlayerMotor : MonoBehaviour
 		rb.MoveRotation (transform.rotation * Quaternion.Euler (rotation));
 
 		if (cam != null) {
-			cam.transform.Rotate (-cameraRotation);
+
+			//Set rotation and clamp it
+			currentCameraRotationX -= cameraRotationX;
+			currentCameraRotationX = Mathf.Clamp (currentCameraRotationX, -cameraRotationLimit, cameraRotationLimit);
+
+			//Apply rotation to the camera transform
+			cam.transform.localEulerAngles = new Vector3 (currentCameraRotationX, 0, 0);
 		}
 	}
 }

@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 public class PlayerSetup : NetworkBehaviour
 {
 	[SerializeField]
-	Behaviour[] componentsToDisable;
+	private Behaviour[] componentsToDisable;
 
 	Camera sceneCamera;
 
