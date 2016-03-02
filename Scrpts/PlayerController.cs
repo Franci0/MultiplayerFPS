@@ -6,6 +6,9 @@ public class PlayerController : MonoBehaviour
 	[SerializeField]
 	private float speed = 5f;
 
+	[SerializeField]
+	private float lookSensitivity = 3f;
+
 	private PlayerMotor motor;
 
 	void Start ()
@@ -27,5 +30,21 @@ public class PlayerController : MonoBehaviour
 
 		//Apply movement
 		motor.Move (_velocity);
+
+		//Calculate rotation as a 3D vector (turning around)
+		float _yRot = Input.GetAxisRaw ("Mouse X");
+
+		Vector3 _rotation = new Vector3 (0, _yRot, 0) * lookSensitivity;
+
+		//Apply rotation
+		motor.Rotate (_rotation);
+
+		//Calculate camera rotation as a 3D vector (turning around)
+		float _xRot = Input.GetAxisRaw ("Mouse Y");
+
+		Vector3 _cameraRotation = new Vector3 (_xRot, 0, 0) * lookSensitivity;
+
+		//Apply camera rotation
+		motor.RotateCamera (_cameraRotation);
 	}
 }
