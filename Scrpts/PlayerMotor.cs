@@ -4,18 +4,18 @@
 public class PlayerMotor : MonoBehaviour
 {
 	[SerializeField]
-	private Camera cam;
+	Camera cam;
 
-	private Vector3 velocity = Vector3.zero;
-	private Vector3 rotation = Vector3.zero;
-	private float cameraRotationX = 0f;
-	private float currentCameraRotationX = 0f;
-	private Vector3 thrusterForce = Vector3.zero;
+	Vector3 velocity = Vector3.zero;
+	Vector3 rotation = Vector3.zero;
+	float cameraRotationX = 0f;
+	float currentCameraRotationX = 0f;
+	Vector3 thrusterForce = Vector3.zero;
 
 	[SerializeField]
-	private float cameraRotationLimit = 85f;
+	float cameraRotationLimit = 85f;
 
-	private Rigidbody rb;
+	Rigidbody rb;
 
 	//Gets a movement vector
 	public void Move (Vector3 _velocity)

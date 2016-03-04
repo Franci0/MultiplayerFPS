@@ -5,20 +5,20 @@
 public class PlayerController : MonoBehaviour
 {
 	[SerializeField]
-	private float speed = 5f;
+	float speed = 5f;
 	[SerializeField]
-	private float lookSensitivity = 3f;
+	float lookSensitivity = 3f;
 	[SerializeField]
-	private float thrusterForce = 1000f;
+	float thrusterForce = 1000f;
 
 	[Header ("Joint Settings")]
 	[SerializeField]
-	private float jointSpring = 20;
+	float jointSpring = 20;
 	[SerializeField]
-	private float jointMaxForce = 40;
+	float jointMaxForce = 40;
 
-	private PlayerMotor motor;
-	private ConfigurableJoint joint;
+	PlayerMotor motor;
+	ConfigurableJoint joint;
 
 	void Start ()
 	{
