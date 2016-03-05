@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 
+[RequireComponent (typeof(Player))]
+#pragma warning disable 649
 public class PlayerSetup : NetworkBehaviour
 {
 	[SerializeField]
@@ -22,8 +24,14 @@ public class PlayerSetup : NetworkBehaviour
 				sceneCamera.gameObject.SetActive (false);
 			}
 		}
+	}
 
-		RegisterPlayer ();
+	public override void OnStartClient ()
+	{
+		base.OnStartClient ();
+		string _netID = GetComponent<NetworkIdentity> ().netId.ToString ();
+		Player _player = GetComponent<Player> ();
+		GameManager.RegisterPlayer (_netID, _player);
 	}
 
 	void OnDisable ()
@@ -31,6 +39,8 @@ public class PlayerSetup : NetworkBehaviour
 		if (sceneCamera != null) {
 			sceneCamera.gameObject.SetActive (true);
 		}
+
+		GameManager.UnregisterPlayer (transform.name);
 	}
 
 	void DisableComponents ()
@@ -43,10 +53,5 @@ public class PlayerSetup : NetworkBehaviour
 	void AssingRemoteLayer ()
 	{
 		gameObject.layer = LayerMask.NameToLayer (remoteLayerName);
-	}
-
-	void RegisterPlayer ()
-	{
-		gameObject.name = "Player " + GetComponent<NetworkIdentity> ().netId;
 	}
 }
