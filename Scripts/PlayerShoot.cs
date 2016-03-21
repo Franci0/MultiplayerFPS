@@ -2,20 +2,18 @@
 using UnityEngine.Networking;
 
 #pragma warning disable 649
+[RequireComponent (typeof(WeaponManager))]
 public class PlayerShoot : NetworkBehaviour
 {
 	const string PLAYER_TAG = "Player";
 
 	[SerializeField]
-	PlayerWeapon weapon;
-	[SerializeField]
-	GameObject weaponGfx;
-	[SerializeField]
-	string weaponLayerName = "Weapon";
-	[SerializeField]
 	Camera cam = null;
 	[SerializeField]
 	LayerMask mask;
+
+	PlayerWeapon currentWeapon;
+	WeaponManager weaponManager;
 
 	void Start ()
 	{
@@ -24,24 +22,35 @@ public class PlayerShoot : NetworkBehaviour
 			enabled = false;
 		}
 
-		weaponGfx.layer = LayerMask.NameToLayer (weaponLayerName);
+		weaponManager = GetComponent<WeaponManager> ();
 	}
 
 	void Update ()
 	{
-		if (Input.GetButtonDown ("Fire1")) {
-			Shoot ();
+		currentWeapon = weaponManager.GetCurrentWeapon ();
+
+		if (currentWeapon.fireRate <= 0) {
+			if (Input.GetButtonDown ("Fire1")) {
+				Shoot ();
+			}
+		} else {
+			if (Input.GetButtonDown ("Fire1")) {
+				InvokeRepeating ("Shoot", 0f, 1f / currentWeapon.fireRate);
+			} else if (Input.GetButtonUp ("Fire1")) {
+				CancelInvoke ("Shoot");
+			}
 		}
 	}
 
 	[Client]
 	void Shoot ()
 	{
+		Debug.Log ("Shoot!");
 		RaycastHit _hit;
 
-		if (Physics.Raycast (cam.transform.position, cam.transform.forward, out _hit, weapon.range, mask)) {
+		if (Physics.Raycast (cam.transform.position, cam.transform.forward, out _hit, currentWeapon.range, mask)) {
 			if (_hit.collider.tag == PLAYER_TAG) {
-				CmdPlayerShot (_hit.collider.name, weapon.damage);
+				CmdPlayerShot (_hit.collider.name, currentWeapon.damage);
 			}
 		}
 	}
